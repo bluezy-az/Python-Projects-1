@@ -1,0 +1,224 @@
+import json
+
+import os
+
+
+
+FILE_NAME = "inventory.json"
+
+
+
+def load_inventory():
+
+    if os.path.exists(FILE_NAME):
+
+        with open(FILE_NAME, "r") as file:
+
+            return json.load(file)
+
+    return []
+
+
+
+def save_inventory():
+
+    with open(FILE_NAME, "w") as file:
+
+        json.dump(products, file, indent=4)
+
+
+
+def add_product():
+
+    name = input("Enter product name: ").strip()
+
+    price = float(input("Enter product price: "))
+
+    quantity = int(input("Enter quantity: "))
+
+
+
+    products.append({
+
+        "name": name,
+
+        "price": price,
+
+        "quantity": quantity
+
+    })
+
+
+
+    save_inventory()
+
+    print("Product added successfully!")
+
+
+
+def view_products():
+
+    if not products:
+
+        print("No products in inventory.")
+
+        return
+
+
+
+    print("\n--- INVENTORY LIST ---")
+
+    for i, p in enumerate(products, 1):
+
+        print(f"{i}. {p['name']} | ₹{p['price']} | Qty: {p['quantity']}")
+
+
+
+def search_product():
+
+    keyword = input("Enter product name to search: ").lower()
+
+
+
+    found = False
+
+    for p in products:
+
+        if keyword in p["name"].lower():
+
+            print(f"Found: {p['name']} | ₹{p['price']} | Qty: {p['quantity']}")
+
+            found = True
+
+
+
+    if not found:
+
+        print("Product not found.")
+
+
+
+def update_stock():
+
+    name = input("Enter product name: ").lower()
+
+
+
+    for p in products:
+
+        if p["name"].lower() == name:
+
+            change = int(input("Enter quantity change (+/-): "))
+
+            p["quantity"] += change
+
+
+
+            if p["quantity"] < 0:
+
+                p["quantity"] = 0
+
+
+
+            save_inventory()
+
+            print("Stock updated!")
+
+            return
+
+
+
+    print("Product not found.")
+
+
+
+def sell_product():
+
+    name = input("Enter product name to sell: ").lower()
+
+
+
+    for p in products:
+
+        if p["name"].lower() == name:
+
+            qty = int(input("Enter quantity to sell: "))
+
+
+
+            if qty > p["quantity"]:
+
+                print("Not enough stock!")
+
+            else:
+
+                p["quantity"] -= qty
+
+                save_inventory()
+
+                total = qty * p["price"]
+
+                print(f"Sold successfully! Total bill: ₹{total}")
+
+            return
+
+
+
+    print("Product not found.")
+
+
+products = load_inventory()
+
+
+
+while True:
+
+    print("\n----- INVENTORY SYSTEM -----")
+
+    print("1. Add Product")
+
+    print("2. View Inventory")
+
+    print("3. Search Product")
+
+    print("4. Update Stock")
+
+    print("5. Sell Product")
+
+    print("6. Exit")
+
+
+
+    choice = input("Choose: ")
+
+
+
+    if choice == "1":
+
+        add_product()
+
+    elif choice == "2":
+
+        view_products()
+
+    elif choice == "3":
+
+        search_product()
+
+    elif choice == "4":
+
+        update_stock()
+
+    elif choice == "5":
+
+        sell_product()
+
+    elif choice == "6":
+
+        print("Exiting...")
+
+        break
+
+    else:
+
+        print("Invalid option")
