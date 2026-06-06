@@ -1,0 +1,81 @@
+import json
+from datetime import datetime
+import os
+
+FILE_NAME = "expenses.json"
+
+def load_expenses():
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as file:
+            return json.load(file)
+    return []
+
+def save_expenses():
+    with open(FILE_NAME, "w") as file:
+        json.dump(expenses, file, indent=4)
+
+def add_expense():
+    category = input("Enter category (food, travel, etc): ")
+    amount = float(input("Enter amount: "))
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    expenses.append({
+        "category": category,
+        "amount": amount,
+        "date": date
+    })
+
+    save_expenses()
+    print("Expense added!")
+
+def view_expenses():
+    if not expenses:
+        print("No expenses found.")
+        return
+
+    print("\n--- All Expenses ---")
+    for i, e in enumerate(expenses, 1):
+        print(f"{i}. {e['date']} | {e['category']} | ₹{e['amount']}")
+
+def total_expense():
+    total = sum(e["amount"] for e in expenses)
+    print(f"\nTotal spent: ₹{total}")
+
+
+def category_summary():
+    summary = {}
+
+    for e in expenses:
+        cat = e["category"]
+        summary[cat] = summary.get(cat, 0) + e["amount"]
+
+    print("\n--- Category Wise Spending ---")
+    for cat, amt in summary.items():
+        print(f"{cat}: ₹{amt}")
+
+
+expenses = load_expenses()
+
+while True:
+    print("\n----- EXPENSE TRACKER -----")
+    print("1. Add Expense")
+    print("2. View Expenses")
+    print("3. Total Expense")
+    print("4. Category Summary")
+    print("5. Exit")
+
+    choice = input("Choose: ")
+
+    if choice == "1":
+        add_expense()
+    elif choice == "2":
+        view_expenses()
+    elif choice == "3":
+        total_expense()
+    elif choice == "4":
+        category_summary()
+    elif choice == "5":
+        print("Exiting...")
+        break
+    else:
+        print("Invalid option")
